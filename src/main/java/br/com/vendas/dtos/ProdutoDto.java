@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 public class ProdutoDto {
     @Hidden
     private Long id;
+    @NotEmpty(message = "{campo.nome.obrigatorio}")
+    private String nomeProduto;
     @NotEmpty(message = "{campo.descricao.obrigatorio}")
     private String descricao;
     @NotNull(message = "{campo.preco.obrigatorio}")

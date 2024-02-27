@@ -18,6 +18,9 @@ public class Produto {
     @Column(name = "id")
     private Integer id;
 
+	@Column(nullable = false, name = "nome_produto")
+    private String nomeProduto;
+
 	@Column(nullable = false)
     private String descricao;
 

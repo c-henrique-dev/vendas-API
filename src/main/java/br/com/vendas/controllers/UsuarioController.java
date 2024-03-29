@@ -37,7 +37,7 @@ public class UsuarioController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario salvar( @RequestBody @Valid UsuarioDto usuarioDto ){
+    public Usuario salvar(@RequestBody @Valid UsuarioDto usuarioDto) {
         String senhaCriptografada = passwordEncoder.encode(usuarioDto.getSenha());
         usuarioDto.setSenha(senhaCriptografada);
         return usuarioService.salvar(usuarioDto);
@@ -45,27 +45,27 @@ public class UsuarioController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update( @PathVariable Integer id,
-                        @RequestBody @Valid UsuarioDto usuarioDto ){
+    public void update(@PathVariable Integer id,
+                       @RequestBody @Valid UsuarioDto usuarioDto) {
         this.usuarioService.update(id, usuarioDto);
     }
 
     @PostMapping("/auth")
-    public TokenDto autenticar(@RequestBody CredenciaisDto credenciais){
-            UsuarioDto usuarioDto = new UsuarioDto();
-            Usuario usuario = Usuario.builder()
-                    .login(credenciais.getLogin())
-                    .senha(credenciais.getSenha()).build();
-            BeanUtils.copyProperties(usuario, usuarioDto);
-            Usuario novoUsuario = this.usuarioService.listarPorLogin(credenciais.getLogin());
-            this.usuarioService.autenticar(usuarioDto);
-            String token = jwtService.gerarToken(novoUsuario);
-            return new TokenDto(token);
+    public TokenDto autenticar(@RequestBody CredenciaisDto credenciais) {
+        UsuarioDto usuarioDto = new UsuarioDto();
+        Usuario usuario = Usuario.builder()
+                .login(credenciais.getLogin())
+                .senha(credenciais.getSenha()).build();
+        BeanUtils.copyProperties(usuario, usuarioDto);
+        Usuario novoUsuario = this.usuarioService.listarPorLogin(credenciais.getLogin());
+        this.usuarioService.autenticar(usuarioDto);
+        String token = jwtService.gerarToken(novoUsuario);
+        return new TokenDto(token);
     }
-    
+
     @GetMapping("/usuarioLogado")
     public UsuarioLogadoDto obterUsuarioLogado() {
-    	return this.usuarioService.obterUsuarioLogado();
+        return this.usuarioService.obterUsuarioLogado();
     }
 
 }

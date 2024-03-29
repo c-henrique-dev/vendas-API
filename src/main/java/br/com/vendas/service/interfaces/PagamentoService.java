@@ -4,5 +4,5 @@ import br.com.vendas.dtos.MensagemDto;
 import br.com.vendas.dtos.PagamentoDto;
 
 public interface PagamentoService {
-	MensagemDto realizarPagamento(PagamentoDto pagamentoDto);
+    MensagemDto realizarPagamento(PagamentoDto pagamentoDto);
 }

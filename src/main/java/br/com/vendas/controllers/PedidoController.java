@@ -43,28 +43,28 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Integer save( @RequestBody @Valid PedidoDto dto ){
-    	System.out.println(dto);
+    public Integer save(@RequestBody @Valid PedidoDto dto) {
+        System.out.println(dto);
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }
 
     @GetMapping("{login}")
-    public List<InformacoesPedidoDto> getById(@PathVariable String login ){
+    public List<InformacoesPedidoDto> getById(@PathVariable String login) {
         return service
                 .obterPedidoCompleto(login).stream()
-                .map( p -> converter(p) )
+                .map(p -> converter(p))
                 .toList();
     }
 
     @PatchMapping("{id}")
     @ResponseStatus(NO_CONTENT)
-    public void updateStatus(@PathVariable Integer id ,
-                             @RequestBody StatusPedidoDto statusPedidoDto){
+    public void updateStatus(@PathVariable Integer id,
+                             @RequestBody StatusPedidoDto statusPedidoDto) {
         service.atualizaStatus(id, statusPedidoDto);
     }
 
-    private InformacoesPedidoDto converter(Pedido pedido){
+    private InformacoesPedidoDto converter(Pedido pedido) {
         return InformacoesPedidoDto
                 .builder()
                 .codigo(pedido.getId())
@@ -77,16 +77,16 @@ public class PedidoController {
                 .build();
     }
 
-    private List<InformacaoItemDto> converter(List<Item> itens){
-        if(CollectionUtils.isEmpty(itens)){
+    private List<InformacaoItemDto> converter(List<Item> itens) {
+        if (CollectionUtils.isEmpty(itens)) {
             return Collections.emptyList();
         }
         return itens.stream().map(
                 item -> InformacaoItemDto
-                            .builder().descricaoProduto(item.getProduto().getDescricao())
-                            .precoUnitario(item.getProduto().getPrecoUnitario())
-                            .quantidade(item.getQuantidade())
-                            .build()
+                        .builder().descricaoProduto(item.getProduto().getDescricao())
+                        .precoUnitario(item.getProduto().getPrecoUnitario())
+                        .quantidade(item.getQuantidade())
+                        .build()
         ).collect(Collectors.toList());
     }
 }

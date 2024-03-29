@@ -16,6 +16,6 @@ public class NotEmptyListValidator
     }
 
     @Override
-    public void initialize( NotEmptyList constraintAnnotation ) {
+    public void initialize(NotEmptyList constraintAnnotation) {
     }
 }

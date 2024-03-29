@@ -33,8 +33,8 @@ public class Produto {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Estoque estoque;
 
-    public Produto(String descricao) {
-        this.descricao = descricao;
+    public Produto(String nomeProduto) {
+        this.nomeProduto = nomeProduto;
     }
 
 }

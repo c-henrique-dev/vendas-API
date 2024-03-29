@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = NotEmptyListValidator.class)
 public @interface NotEmptyList {
     String message() default "A lista não pode ser vazia.";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

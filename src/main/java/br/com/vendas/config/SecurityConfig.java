@@ -17,22 +17,23 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public OncePerRequestFilter jwtFilter(){
+    public OncePerRequestFilter jwtFilter() {
         return new JwtAuthFilter();
     }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http ) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/pedidos/**")
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/produtos/**")

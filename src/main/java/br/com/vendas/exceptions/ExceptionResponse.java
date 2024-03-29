@@ -14,6 +14,7 @@ public class ExceptionResponse {
         this.message = message;
         this.statusCode = statusCode;
     }
+
     public Date getTimestamp() {
         return timestamp;
     }

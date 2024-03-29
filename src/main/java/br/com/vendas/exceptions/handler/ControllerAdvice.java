@@ -77,7 +77,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(RegraNegocioException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionResponse handleRegraNegocioException(RegraNegocioException ex){
+    public ExceptionResponse handleRegraNegocioException(RegraNegocioException ex) {
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(
                         new Date(),

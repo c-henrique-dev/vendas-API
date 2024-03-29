@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EstoqueDto {
-	@NotNull(message = "{campo.quantidade-disponivel.obrigatorio}")
-	private Integer quantidadeDisponivel;
+    @NotNull(message = "{campo.quantidade-disponivel.obrigatorio}")
+    private Integer quantidadeDisponivel;
 }

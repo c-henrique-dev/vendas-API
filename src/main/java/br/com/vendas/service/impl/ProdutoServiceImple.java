@@ -1,10 +1,10 @@
 package br.com.vendas.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,20 +34,26 @@ public class ProdutoServiceImple implements ProdutoService {
     public Produto salvar(ProdutoDto produtoDto) {
         Produto produto = new Produto();
         BeanUtils.copyProperties(produtoDto, produto);
-        
+
         EstoqueDto estoqueDto = produtoDto.getEstoque();
         Estoque estoque = new Estoque();
         BeanUtils.copyProperties(estoqueDto, estoque);
 
         produto.setEstoque(estoque);
-        
+
         this.produtoRepository.save(produto);
         return produto;
     }
 
+    @Override
     public MensagemDto adicionarImagemAoProduto(Integer idProduto, MultipartFile imagem) throws Exception {
         Produto produto = this.produtoRepository.findById(idProduto)
                 .orElseThrow(() -> new NaoEncontradoException("Produto não encontrado"));
+
+        if (produto.getNomeImagem() != null) {
+            this.minioServiceImple.excluirImagem(produto.getNomeImagem());
+        }
+
         String nomeImagem = this.minioServiceImple.enviarImagem(imagem);
         produto.setNomeImagem(nomeImagem);
         this.produtoRepository.save(produto);
@@ -59,7 +65,7 @@ public class ProdutoServiceImple implements ProdutoService {
         this.produtoRepository.findById(id)
                 .map(p -> {
                     BeanUtils.copyProperties(produtoDto, p);
-                    
+
                     BeanUtils.copyProperties(produtoDto.getEstoque(), p.getEstoque());
                     produtoRepository.save(p);
                     return p;
@@ -71,10 +77,10 @@ public class ProdutoServiceImple implements ProdutoService {
     public void delete(Integer id) {
         this.produtoRepository
                 .findById(id)
-                .map( p -> {
+                .map(p -> {
                     produtoRepository.delete(p);
                     return Void.TYPE;
-                }).orElseThrow( () ->
+                }).orElseThrow(() ->
                         new NaoEncontradoException("Produto não encontrado."));
     }
 
@@ -82,32 +88,32 @@ public class ProdutoServiceImple implements ProdutoService {
     public Produto getById(Integer id) throws Exception {
         Produto produto = this.produtoRepository
                 .findById(id)
-                .orElseThrow( () ->
+                .orElseThrow(() ->
                         new NaoEncontradoException("Produto não encontrado."));
-        if(produto.getNomeImagem() != null && !produto.getNomeImagem().isEmpty()) {
+        if (produto.getNomeImagem() != null && !produto.getNomeImagem().isEmpty()) {
             String imagem = this.minioServiceImple.recuperarImagem(produto.getNomeImagem());
             produto.setNomeImagem(imagem);
         } else {
             String imagem = this.minioServiceImple.recuperarImagem("sem-fundo.png");
             produto.setNomeImagem(imagem);
         }
-        
+
         return produto;
     }
 
     @Override
-    public List<Produto> find(Produto filtro) throws Exception {
+    public Page<Produto> find(Produto filtro, Pageable pageable) throws Exception {
         ExampleMatcher matcher = ExampleMatcher
                 .matching()
                 .withIgnoreCase()
                 .withStringMatcher(
-                        ExampleMatcher.StringMatcher.CONTAINING );
+                        ExampleMatcher.StringMatcher.CONTAINING);
 
         Example<Produto> example = Example.of(filtro, matcher);
-        List<Produto> produtos = produtoRepository.findAll(example);
-        
-        for(Produto p: produtos ) {
-            if(p.getNomeImagem() != null && !p.getNomeImagem().isEmpty()) {
+        Page<Produto> produtos = produtoRepository.findAll(example, pageable);
+
+        for (Produto p : produtos.getContent()) {
+            if (p.getNomeImagem() != null && !p.getNomeImagem().isEmpty()) {
                 String imagem = this.minioServiceImple.recuperarImagem(p.getNomeImagem());
                 p.setNomeImagem(imagem);
             } else {

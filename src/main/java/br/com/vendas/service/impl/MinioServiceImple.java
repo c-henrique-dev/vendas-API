@@ -4,6 +4,7 @@ import br.com.vendas.service.interfaces.MinioService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,7 @@ import java.util.Date;
 public class MinioServiceImple implements MinioService {
     private final MinioClient minioClient;
     @Value("${minio.bucket}")
-    public String  bucket;
+    public String bucket;
 
     @Value("${minio.put-object-part-size}")
     private Long putObjectPartSize;
@@ -30,10 +31,19 @@ public class MinioServiceImple implements MinioService {
                         .bucket(bucket)
                         .object(generateFileName(file.getOriginalFilename()))
                         .stream(file.getInputStream(), file.getSize(), putObjectPartSize)
-                        .build()
-        );
+                        .build());
 
         return generateFileName(file.getOriginalFilename());
+    }
+
+    public String excluirImagem(String nome) throws Exception {
+        minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                        .bucket(bucket)
+                        .object(nome)
+                        .build());
+
+        return nome;
     }
 
     public String recuperarImagem(String nome) throws Exception {

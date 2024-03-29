@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class MinioConfig {
 
     @Value("${minio.bucket}")
-    public String  bucket;
+    public String bucket;
 
     @Value("${minio.url}")
     private String minioUrl;

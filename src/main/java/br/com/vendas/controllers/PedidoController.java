@@ -44,7 +44,6 @@ public class PedidoController {
     @PostMapping
     @ResponseStatus(CREATED)
     public Integer save(@RequestBody @Valid PedidoDto dto) {
-        System.out.println(dto);
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }

@@ -3,7 +3,6 @@ package br.com.vendas.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import br.com.vendas.dtos.MensagemDto;
 import br.com.vendas.dtos.PagamentoDto;
 import br.com.vendas.entities.Pagamento;
 import br.com.vendas.enums.FormaDePagamento;
@@ -21,7 +20,7 @@ public class PagamentoServiceImple implements PagamentoService {
     }
 
     @Override
-    public MensagemDto realizarPagamento(PagamentoDto pagamentoDto) {
+    public Pagamento realizarPagamento(PagamentoDto pagamentoDto) {
         Pagamento pagamento = new Pagamento();
         if (pagamentoDto.getFormaDePagamento() != FormaDePagamento.CARTAO_CREDITO) {
             pagamento.setParcela(0);
@@ -29,10 +28,8 @@ public class PagamentoServiceImple implements PagamentoService {
             pagamento.setParcela(pagamentoDto.getParcelas());
         }
         pagamento.setStatusPagamento(StatusPagamento.ANALISE);
-        pagamento.setPedido(pagamentoDto.getPedido());
         BeanUtils.copyProperties(pagamentoDto, pagamento);
-        this.pagamentoRepository.save(pagamento);
-        return MensagemDto.builder().mensagem("O pagamento está em análise!").build();
+       return this.pagamentoRepository.save(pagamento);
     }
 
 }

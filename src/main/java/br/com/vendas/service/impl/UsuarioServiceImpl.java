@@ -55,7 +55,6 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println(username);
         Usuario usuario = repository.findByLogin(username)
                 .orElseThrow(() -> new NaoEncontradoException("Usuário não encontrado na base de dados."));
 

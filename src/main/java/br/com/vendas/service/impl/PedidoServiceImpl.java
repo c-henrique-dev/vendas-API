@@ -50,31 +50,30 @@ public class PedidoServiceImpl implements PedidoService {
 
         List<Item> itemsPedido = converterItens(pedido, pedidoDto.getItens());
         pedido.setItens(itemsPedido);
+    
         for (Item item : pedido.getItens()) {
             pedido.setTotal(item.getProduto().getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade())));
-
         }
 
-        Pedido pedidoSalvo = pedidoRepository.save(pedido);
-
-        if (pedidoSalvo != null) {
-            for (Item item : itemsPedido) {
-                Integer quantidadeDisponivel = item.getProduto().getEstoque().getQuantidadeDisponivel();
-                Integer quantidadeAtualizada = quantidadeDisponivel - item.getQuantidade();
-                if (quantidadeAtualizada <= 0) {
-                    throw new RegraNegocioException(
-                            "Estoque indisponível para o produto: " + item.getProduto().getDescricao());
-                } else {
-                    item.getProduto().getEstoque().setQuantidadeDisponivel(quantidadeAtualizada);
-                    PagamentoDto pagamentoDto = new PagamentoDto();
-                    pagamentoDto.setFormaDePagamento(pedidoDto.getFormaDePagamento());
-                    pagamentoDto.setValorPagamento(pedido.getTotal());
-                    pagamentoDto.setPedido(item.getPedido());
-                    pagamentoDto.setParcelas(pedidoDto.getParcelas());
-                    this.pagamentoService.realizarPagamento(pagamentoDto);
-                }
+        for (Item item : itemsPedido) {
+            Integer quantidadeDisponivel = item.getProduto().getEstoque().getQuantidadeDisponivel();
+            Integer quantidadeAtualizada = quantidadeDisponivel - item.getQuantidade();
+            
+            if (quantidadeAtualizada <= 0) {
+                throw new RegraNegocioException(
+                        "Estoque indisponível para o produto: " + item.getProduto().getDescricao());
+            } else {
+                item.getProduto().getEstoque().setQuantidadeDisponivel(quantidadeAtualizada);
+                PagamentoDto pagamentoDto = new PagamentoDto();
+                pagamentoDto.setFormaDePagamento(pedidoDto.getFormaDePagamento());
+                pagamentoDto.setValorPagamento(pedido.getTotal());
+                pagamentoDto.setParcelas(pedidoDto.getParcelas());
+                var pagamento = this.pagamentoService.realizarPagamento(pagamentoDto);
+                pedido.setPagamento(pagamento);
             }
         }
+
+        this.pedidoRepository.save(pedido);
 
         return pedido;
     }

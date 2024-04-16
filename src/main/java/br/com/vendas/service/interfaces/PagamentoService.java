@@ -1,8 +1,8 @@
 package br.com.vendas.service.interfaces;
 
-import br.com.vendas.dtos.MensagemDto;
 import br.com.vendas.dtos.PagamentoDto;
+import br.com.vendas.entities.Pagamento;
 
 public interface PagamentoService {
-    MensagemDto realizarPagamento(PagamentoDto pagamentoDto);
+    Pagamento realizarPagamento(PagamentoDto pagamentoDto);
 }
